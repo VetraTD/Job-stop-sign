@@ -1,3 +1,75 @@
+import { useEffect, useState } from 'react'
+
+function pad2(n) {
+  return String(n).padStart(2, '0')
+}
+
+function HotlinePhone() {
+  const [now, setNow] = useState(() => new Date())
+
+  useEffect(() => {
+    const id = window.setInterval(() => setNow(new Date()), 1000)
+    return () => window.clearInterval(id)
+  }, [])
+
+  const timeStr = `${pad2(now.getHours())}:${pad2(now.getMinutes())}`
+
+  return (
+    <div className="hotline-phone-wrap">
+      <div className="hotline-phone" aria-hidden="true">
+        <div className="hotline-phone__side hotline-phone__side--mute" />
+        <div className="hotline-phone__side hotline-phone__side--vol" />
+        <div className="hotline-phone__body">
+          <div className="hotline-phone__inner">
+            <div className="hotline-phone__island" />
+            <div className="hotline-phone__screen">
+              <div className="hotline-phone__scanlines" />
+              <div className="hotline-phone__sheen" />
+              <div className="hotline-phone__glow" />
+              <div className="hotline-phone__statusbar">
+                <time className="hotline-phone__time" dateTime={now.toISOString()}>
+                  {timeStr}
+                </time>
+                <div className="hotline-phone__statusbar-mid" aria-hidden>
+                  <span className="hotline-phone__carrier">Coach</span>
+                </div>
+                <div className="hotline-phone__status-icons" aria-hidden>
+                  <span className="hotline-phone__signal">
+                    <span />
+                    <span />
+                    <span />
+                    <span />
+                  </span>
+                  <span className="hotline-phone__battery">
+                    <span className="hotline-phone__battery-level" />
+                  </span>
+                </div>
+              </div>
+              <div className="hotline-phone__call">
+                <div className="hotline-phone__avatar-wrap">
+                  <div className="hotline-phone__avatar-ring" />
+                  <div className="hotline-phone__avatar">AI</div>
+                </div>
+                <p className="hotline-phone__incoming">Incoming voice line</p>
+                <p className="hotline-phone__name">Career Coach</p>
+                <p className="hotline-phone__meta">HD audio · Private session</p>
+                <div className="hotline-phone__chips">
+                  <span>Interview prep</span>
+                  <span>CV polish</span>
+                </div>
+                <div className="hotline-phone__cta-row">
+                  <span className="hotline-phone__cta-hint">Tap number on card to call</span>
+                </div>
+              </div>
+              <div className="hotline-phone__home-bar" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export function Hotline() {
   return (
     <div className="page hotline-page">
@@ -36,24 +108,7 @@ export function Hotline() {
           </div>
         </article>
 
-        <div className="hotline-phone-wrap">
-          <div className="hotline-phone" aria-hidden="true">
-            <div className="hotline-phone__side hotline-phone__side--mute" />
-            <div className="hotline-phone__side hotline-phone__side--vol" />
-            <div className="hotline-phone__body">
-              <div className="hotline-phone__inner">
-                <div className="hotline-phone__island" />
-                <div className="hotline-phone__screen">
-                  <div className="hotline-phone__glow" />
-                  <div className="hotline-phone__ui">
-                    <span className="hotline-phone__label">Career Coach</span>
-                    <span className="hotline-phone__sub">Voice session</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <HotlinePhone />
       </div>
     </div>
   )
