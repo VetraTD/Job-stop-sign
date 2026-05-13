@@ -107,7 +107,7 @@ export function Hotline() {
           <h1 className="page-title">AI Career Coach</h1>
           <p className="page-subtitle">
             Book-style guidance for interviews, CV tightening, and follow-ups.
-            This preview uses a placeholder number only.
+            Call the line below from your phone when you are ready.
           </p>
         </div>
       </div>
@@ -122,11 +122,11 @@ export function Hotline() {
               plan a follow-up — structured sessions that respect your time and
               your goals.
             </p>
-            <a className="hotline-number" href="tel:+15550000000">
-              +1 (555) 000-0000
+            <a className="hotline-number" href="tel:+18176011171">
+              +1 (817) 601-1171
             </a>
             <p className="hotline-note">
-              Placeholder number for this MVP — no calls are connected yet.
+              Standard voice rates may apply depending on your carrier and plan.
             </p>
             <ul className="hotline-usecases">
               <li>Mock interview practice</li>

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { AuthSpinner } from '../components/AuthSpinner'
 import { isSupabaseConfigured, supabase } from '../lib/supabaseClient'
 import { ensureProfileRow } from '../lib/profiles'
 
@@ -22,18 +23,29 @@ export function AuthSignup({ onBack, onLogin }) {
       return
     }
     setLoading(true)
+    const siteUrl = (
+      import.meta.env.VITE_SITE_URL?.trim() ||
+      (typeof window !== 'undefined' ? window.location.origin : '')
+    ).replace(/\/$/, '')
     const { data, error: err } = await supabase.auth.signUp({
       email: email.trim(),
       password,
+      options: siteUrl
+        ? { emailRedirectTo: `${siteUrl}/` }
+        : undefined,
     })
-    setLoading(false)
     if (err) {
       setError(err.message)
+      setLoading(false)
       return
     }
     if (data.session?.user) {
-      await ensureProfileRow(data.session.user.id)
-      setInfo('Account created — you are signed in.')
+      const { error: pErr } = await ensureProfileRow(data.session.user.id)
+      if (pErr) {
+        setError(pErr.message)
+        setLoading(false)
+        return
+      }
       return
     }
     if (data.user) {
@@ -41,6 +53,7 @@ export function AuthSignup({ onBack, onLogin }) {
         'Check your email to confirm your account, then return here to log in.',
       )
     }
+    setLoading(false)
   }
 
   return (
@@ -49,6 +62,11 @@ export function AuthSignup({ onBack, onLogin }) {
         ← Back
       </button>
       <div className="auth-card">
+        {loading ? (
+          <div className="auth-card-overlay">
+            <AuthSpinner label="Creating your account…" />
+          </div>
+        ) : null}
         <h1 className="page-title">Create account</h1>
         <p className="page-subtitle">
           Creates a Supabase Auth user and a row in <code className="profile-code">profiles</code> when you first sign in.

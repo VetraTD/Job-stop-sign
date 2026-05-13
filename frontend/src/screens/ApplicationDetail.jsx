@@ -270,8 +270,8 @@ export function ApplicationDetail({
               Use the hotline to rehearse answers, refine your narrative, or plan
               next steps after you send this application.
             </p>
-            <a className="app-pack-coach__link" href="tel:+15550000000">
-              +1 (555) 000-0000
+            <a className="app-pack-coach__link" href="tel:+18176011171">
+              +1 (817) 601-1171
             </a>
           </div>
         </aside>

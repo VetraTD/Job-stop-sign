@@ -76,6 +76,7 @@ export const supabase = isSupabaseConfigured
         persistSession: true,
         autoRefreshToken: true,
         detectSessionInUrl: true,
+        flowType: 'pkce',
       },
     })
   : /** @type {import('@supabase/supabase-js').SupabaseClient} */ (noopClient)

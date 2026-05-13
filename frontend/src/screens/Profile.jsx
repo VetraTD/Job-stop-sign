@@ -1,23 +1,31 @@
 import { useEffect, useState } from 'react'
 import { fetchProfile, upsertProfile } from '../lib/profiles'
 
-/** Match `public.geo_market` enum labels in Supabase (adjust if yours differ). */
+/** `public.geo_market` */
 const GEO_OPTIONS = [
   { value: '', label: 'Not set' },
   { value: 'UK', label: 'UK' },
   { value: 'US', label: 'US' },
-  { value: 'EU', label: 'EU' },
-  { value: 'REMOTE', label: 'Remote' },
 ]
 
-/** Match `public.experience_level` enum (adjust to your exact labels). */
+/** `public.experience_level` */
 const EXP_OPTIONS = [
   { value: '', label: 'Not set' },
-  { value: 'ENTRY', label: 'Entry' },
-  { value: 'MID', label: 'Mid' },
-  { value: 'SENIOR', label: 'Senior' },
-  { value: 'LEAD', label: 'Lead' },
-  { value: 'EXECUTIVE', label: 'Executive' },
+  { value: 'intern', label: 'Intern' },
+  { value: 'junior', label: 'Junior' },
+  { value: 'mid', label: 'Mid' },
+  { value: 'senior', label: 'Senior' },
+  { value: 'lead', label: 'Lead' },
+  { value: 'exec', label: 'Executive' },
+]
+
+/** `public.work_authorization` */
+const WORK_AUTH_OPTIONS = [
+  { value: '', label: 'Not set' },
+  { value: 'citizen', label: 'Citizen' },
+  { value: 'permanent_resident', label: 'Permanent resident' },
+  { value: 'visa_required', label: 'Visa required' },
+  { value: 'student', label: 'Student' },
 ]
 
 function emptyForm() {
@@ -27,7 +35,8 @@ function emptyForm() {
     location: '',
     geo_market: '',
     experience_level: '',
-    work_auth: '',
+    work_authorization: '',
+    linkedin_url: '',
   }
 }
 
@@ -57,7 +66,8 @@ export function Profile({ user, onSaved }) {
           location: profile.location ?? '',
           geo_market: profile.geo_market ?? '',
           experience_level: profile.experience_level ?? '',
-          work_auth: profile.work_auth ?? '',
+          work_authorization: profile.work_authorization ?? '',
+          linkedin_url: profile.linkedin_url ?? '',
         })
       } else {
         setForm(emptyForm())
@@ -87,7 +97,8 @@ export function Profile({ user, onSaved }) {
       location: form.location.trim() || null,
       geo_market: form.geo_market || null,
       experience_level: form.experience_level || null,
-      work_auth: form.work_auth.trim() || null,
+      work_authorization: form.work_authorization || null,
+      linkedin_url: form.linkedin_url.trim() || null,
     }
     const { profile, error: err } = await upsertProfile(row)
     setSaving(false)
@@ -102,7 +113,8 @@ export function Profile({ user, onSaved }) {
         location: profile.location ?? '',
         geo_market: profile.geo_market ?? '',
         experience_level: profile.experience_level ?? '',
-        work_auth: profile.work_auth ?? '',
+        work_authorization: profile.work_authorization ?? '',
+        linkedin_url: profile.linkedin_url ?? '',
       })
       onSaved?.(profile)
     }
@@ -187,13 +199,29 @@ export function Profile({ user, onSaved }) {
                 ))}
               </select>
             </label>
+            <label className="field">
+              <span className="field-label">Work authorization</span>
+              <select
+                className="input"
+                value={form.work_authorization}
+                onChange={(e) => patch('work_authorization', e.target.value)}
+              >
+                {WORK_AUTH_OPTIONS.map((o) => (
+                  <option key={`wa-${o.value || 'x'}`} value={o.value}>
+                    {o.label}
+                  </option>
+                ))}
+              </select>
+            </label>
             <label className="field field-span">
-              <span className="field-label">Work authorisation</span>
+              <span className="field-label">LinkedIn URL</span>
               <input
                 className="input"
-                value={form.work_auth}
-                onChange={(e) => patch('work_auth', e.target.value)}
-                placeholder="e.g. Right to work in UK, visa sponsorship needed…"
+                type="url"
+                value={form.linkedin_url}
+                onChange={(e) => patch('linkedin_url', e.target.value)}
+                placeholder="https://www.linkedin.com/in/…"
+                autoComplete="url"
               />
             </label>
           </div>

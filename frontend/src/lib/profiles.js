@@ -9,7 +9,8 @@ import { supabase } from './supabaseClient'
  * @property {string|null} [location]
  * @property {string|null} [geo_market]
  * @property {string|null} [experience_level]
- * @property {string|null} [work_auth]
+ * @property {string|null} [work_authorization]
+ * @property {string|null} [linkedin_url]
  */
 
 /**

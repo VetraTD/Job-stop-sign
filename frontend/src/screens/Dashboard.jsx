@@ -5,6 +5,7 @@ import {
   getLastActivityIso,
   normalizeTrackerApp,
 } from '../utils/applicationHealth'
+import { getSafeExternalUrl } from '../lib/safeUrl'
 import './Dashboard.css'
 
 const STATUS_LABEL = {
@@ -205,9 +206,9 @@ export function Dashboard({
   }, [withHealth, pipelineFilter])
 
   const openJob = (url) => {
-    if (!url || !url.trim()) return
-    const href = url.startsWith('http') ? url : `https://${url}`
-    window.open(href, '_blank', 'noopener,noreferrer')
+    const safe = getSafeExternalUrl(url)
+    if (!safe) return
+    window.open(safe, '_blank', 'noopener,noreferrer')
   }
 
   const pipelineKeys = [
@@ -331,7 +332,8 @@ export function Dashboard({
             ) : (
               <ul className="dash-pack-list">
                 {applicationPacks.map((app) => {
-                  const hasUrl = Boolean(app.jobUrl && app.jobUrl.trim())
+                  const safeJobUrl = getSafeExternalUrl(app.jobUrl)
+                  const hasUrl = Boolean(safeJobUrl)
                   const healthClass =
                     HEALTH_CLASS[app.health] || HEALTH_CLASS.Active
                   return (

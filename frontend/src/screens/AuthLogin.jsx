@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { AuthSpinner } from '../components/AuthSpinner'
 import { isSupabaseConfigured, supabase } from '../lib/supabaseClient'
 import { ensureProfileRow } from '../lib/profiles'
 
@@ -20,14 +21,21 @@ export function AuthLogin({ onBack }) {
       email: email.trim(),
       password,
     })
-    setLoading(false)
     if (err) {
       setError(err.message)
+      setLoading(false)
       return
     }
     if (data.user) {
-      await ensureProfileRow(data.user.id)
+      const { error: pErr } = await ensureProfileRow(data.user.id)
+      if (pErr) {
+        setError(pErr.message)
+        setLoading(false)
+        return
+      }
+      return
     }
+    setLoading(false)
   }
 
   return (
@@ -36,6 +44,11 @@ export function AuthLogin({ onBack }) {
         ← Back
       </button>
       <div className="auth-card">
+        {loading ? (
+          <div className="auth-card-overlay">
+            <AuthSpinner label="Signing you in…" />
+          </div>
+        ) : null}
         <h1 className="page-title">Log in</h1>
         <p className="page-subtitle">
           Sign in with your Supabase account. Session is stored in the browser.

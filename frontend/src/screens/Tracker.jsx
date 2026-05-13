@@ -6,6 +6,7 @@ import {
   getLastActivityIso,
   normalizeTrackerApp,
 } from '../utils/applicationHealth'
+import { getSafeExternalUrl } from '../lib/safeUrl'
 import './Tracker.css'
 
 const STATUS_ORDER = [
@@ -326,9 +327,8 @@ export function Tracker({ applications, onViewPack }) {
                 ) : (
                   sorted.map((app) => {
                     const lastIso = getLastActivityIso(app)
-                    const hasUrl = Boolean(
-                      app.jobUrl && app.jobUrl.trim().length > 0,
-                    )
+                    const safeJobUrl = getSafeExternalUrl(app.jobUrl)
+                    const hasUrl = Boolean(safeJobUrl)
                     return (
                       <tr key={app.id} className="tracker-tr">
                         <td className="tracker-td">
@@ -347,11 +347,11 @@ export function Tracker({ applications, onViewPack }) {
                           {hasUrl ? (
                             <a
                               className="tracker-url-link"
-                              href={app.jobUrl}
+                              href={safeJobUrl}
                               target="_blank"
                               rel="noopener noreferrer"
                             >
-                              {shortUrl(app.jobUrl)}
+                              {shortUrl(safeJobUrl)}
                             </a>
                           ) : (
                             <span className="tracker-td--faint">—</span>
@@ -403,7 +403,7 @@ export function Tracker({ applications, onViewPack }) {
                             {hasUrl ? (
                               <a
                                 className="tracker-link-btn"
-                                href={app.jobUrl}
+                                href={safeJobUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
                               >
@@ -437,9 +437,8 @@ export function Tracker({ applications, onViewPack }) {
                   ) : (
                     col.items.map((app) => {
                       const lastIso = getLastActivityIso(app)
-                      const hasUrl = Boolean(
-                        app.jobUrl && app.jobUrl.trim().length > 0,
-                      )
+                      const safeJobUrl = getSafeExternalUrl(app.jobUrl)
+                      const hasUrl = Boolean(safeJobUrl)
                       return (
                         <li key={app.id}>
                           <div className="tracker-app-card">
@@ -489,7 +488,7 @@ export function Tracker({ applications, onViewPack }) {
                               {hasUrl ? (
                                 <a
                                   className="tracker-btn"
-                                  href={app.jobUrl}
+                                  href={safeJobUrl}
                                   target="_blank"
                                   rel="noopener noreferrer"
                                 >

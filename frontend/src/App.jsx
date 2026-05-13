@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Layout } from './components/Layout'
+import { AuthSpinner } from './components/AuthSpinner'
 import { Landing } from './screens/Landing'
 import { AuthLogin } from './screens/AuthLogin'
 import { AuthSignup } from './screens/AuthSignup'
@@ -191,19 +192,31 @@ export default function App() {
   useEffect(() => {
     let cancelled = false
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (cancelled) return
-      if (session?.user) {
-        setUser({
-          id: session.user.id,
-          email: session.user.email ?? '',
-        })
-        setScreen('dashboard')
-        seedDemoApplicationsOnce()
-        refreshProfile(session.user.id)
-      }
-      setAuthReady(true)
-    })
+    supabase.auth
+      .getSession()
+      .then(({ data: { session }, error }) => {
+        if (cancelled) return
+        if (error) {
+          console.error('[auth] getSession', error.message)
+          setAuthReady(true)
+          return
+        }
+        if (session?.user) {
+          setUser({
+            id: session.user.id,
+            email: session.user.email ?? '',
+          })
+          setScreen('dashboard')
+          seedDemoApplicationsOnce()
+          refreshProfile(session.user.id)
+        }
+        setAuthReady(true)
+      })
+      .catch((err) => {
+        if (cancelled) return
+        console.error('[auth] getSession', err)
+        setAuthReady(true)
+      })
 
     const {
       data: { subscription },
@@ -213,7 +226,9 @@ export default function App() {
           id: session.user.id,
           email: session.user.email ?? '',
         })
-        refreshProfile(session.user.id)
+        if (event !== 'TOKEN_REFRESHED') {
+          refreshProfile(session.user.id)
+        }
         if (event === 'SIGNED_IN') {
           setScreen('dashboard')
           seedDemoApplicationsOnce()
@@ -296,8 +311,8 @@ export default function App() {
 
   if (!authReady) {
     return (
-      <div className="shell auth-boot">
-        <main className="main-area auth-boot-inner">Loading…</main>
+      <div className="auth-session-gate">
+        <AuthSpinner label="Checking your session…" />
       </div>
     )
   }
