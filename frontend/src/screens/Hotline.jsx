@@ -1,14 +1,36 @@
 import { useEffect, useState } from 'react'
 
+const PHONE_SUBTITLES = [
+  'HD audio · Private session',
+  'STAR stories, sharpened fast',
+  'Salary talk without the awkward',
+  'Follow-ups that sound human',
+  'Job post → your talk track',
+  'Behavioral + technical mock runs',
+  'CV gaps → a clear narrative',
+  'Thank-you notes that actually land',
+]
+
 function pad2(n) {
   return String(n).padStart(2, '0')
 }
 
 function HotlinePhone() {
   const [now, setNow] = useState(() => new Date())
+  const [subtitleIx, setSubtitleIx] = useState(0)
 
   useEffect(() => {
     const id = window.setInterval(() => setNow(new Date()), 1000)
+    return () => window.clearInterval(id)
+  }, [])
+
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
+    if (mq.matches) return undefined
+    const id = window.setInterval(
+      () => setSubtitleIx((i) => (i + 1) % PHONE_SUBTITLES.length),
+      3800,
+    )
     return () => window.clearInterval(id)
   }, [])
 
@@ -52,7 +74,14 @@ function HotlinePhone() {
                 </div>
                 <p className="hotline-phone__incoming">Incoming voice line</p>
                 <p className="hotline-phone__name">Career Coach</p>
-                <p className="hotline-phone__meta">HD audio · Private session</p>
+                <div className="hotline-phone__subtitle-slot">
+                  <p
+                    key={subtitleIx}
+                    className="hotline-phone__subtitle"
+                  >
+                    {PHONE_SUBTITLES[subtitleIx]}
+                  </p>
+                </div>
                 <div className="hotline-phone__chips">
                   <span>Interview prep</span>
                   <span>CV polish</span>

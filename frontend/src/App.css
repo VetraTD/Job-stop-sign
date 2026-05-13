@@ -1060,6 +1060,18 @@
   }
 }
 
+@keyframes hotline-phone-subtitle-in {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .hotline-phone-wrap,
   .hotline-phone__glow,
@@ -1072,6 +1084,10 @@
 
   .hotline-phone__sheen {
     opacity: 0.35;
+  }
+
+  .hotline-phone__subtitle {
+    animation: none;
   }
 }
 
@@ -1347,12 +1363,31 @@
   line-height: 1.2;
 }
 
-.hotline-phone__meta {
+.hotline-phone__subtitle-slot {
+  width: 100%;
+  min-height: 2.65em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0.08rem 0 0;
+}
+
+.hotline-phone__subtitle {
   margin: 0;
+  padding: 0 0.45rem;
+  max-width: 22ch;
   font-size: 0.65rem;
-  color: rgba(148, 163, 184, 0.95);
-  line-height: 1.35;
-  max-width: 16ch;
+  font-weight: 500;
+  color: rgba(148, 163, 184, 0.98);
+  line-height: 1.4;
+  text-align: center;
+  animation: hotline-phone-subtitle-in 0.52s ease-out;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hotline-phone__subtitle {
+    will-change: opacity, transform;
+  }
 }
 
 .hotline-phone__chips {
@@ -1364,13 +1399,14 @@
 }
 
 .hotline-phone__chips span {
-  padding: 0.18rem 0.42rem;
+  padding: 0.2rem 0.48rem;
   border-radius: 999px;
   font-size: 0.58rem;
   font-weight: 600;
-  color: rgba(203, 213, 225, 0.95);
-  background: rgba(0, 0, 0, 0.35);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #f8fafc;
+  background: linear-gradient(145deg, #3b82f6 0%, #1d4ed8 100%);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.35);
 }
 
 .hotline-phone__cta-row {
