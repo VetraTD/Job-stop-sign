@@ -36,15 +36,24 @@ export function Hotline() {
           </div>
         </article>
 
-        <aside className="hotline-aside" aria-label="What the coach helps with">
-          <h2>Designed for depth</h2>
-          <ul>
-            <li>Structured prompts so you never start from a blank page.</li>
-            <li>Feedback tuned to role seniority and industry norms.</li>
-            <li>Follow-up plans that feel human, not robotic.</li>
-            <li>Same brand experience as your application packs.</li>
-          </ul>
-        </aside>
+        <div className="hotline-phone-wrap">
+          <div className="hotline-phone" aria-hidden="true">
+            <div className="hotline-phone__side hotline-phone__side--mute" />
+            <div className="hotline-phone__side hotline-phone__side--vol" />
+            <div className="hotline-phone__body">
+              <div className="hotline-phone__inner">
+                <div className="hotline-phone__island" />
+                <div className="hotline-phone__screen">
+                  <div className="hotline-phone__glow" />
+                  <div className="hotline-phone__ui">
+                    <span className="hotline-phone__label">Career Coach</span>
+                    <span className="hotline-phone__sub">Voice session</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   )
