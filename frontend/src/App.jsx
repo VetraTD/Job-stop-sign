@@ -281,6 +281,7 @@ export default function App() {
       status: 'saved',
       tone: form.tone,
       cvText: form.cvText,
+      cvFileName: form.cvFileName ?? '',
       jobDescription: form.jobDescription,
       jobUrl: '',
       location: 'Not specified',

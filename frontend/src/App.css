@@ -164,6 +164,12 @@
   background: var(--accent-hover);
 }
 
+.btn-primary:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
 .btn-secondary {
   background: rgba(255, 255, 255, 0.04);
   color: var(--text);
@@ -565,6 +571,102 @@
 
 .new-app .form-wide {
   padding: 1.5rem 1.35rem;
+}
+
+.field--cv {
+  position: relative;
+}
+
+.cv-upload__native {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.cv-upload__box {
+  display: flex;
+  min-height: 9.5rem;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem 1rem;
+  cursor: pointer;
+  text-align: center;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.cv-upload__box--drag {
+  border-color: rgba(59, 130, 246, 0.55);
+  box-shadow: 0 0 0 2px var(--accent-dim);
+  background: rgba(15, 23, 42, 0.9);
+}
+
+.cv-upload__prompt {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.45;
+}
+
+.cv-upload__action {
+  font-weight: 700;
+  color: var(--accent-bright);
+}
+
+.cv-upload__or {
+  color: var(--text-faint);
+  font-size: 0.88rem;
+}
+
+.cv-upload__types {
+  font-size: 0.78rem;
+  color: var(--text-faint);
+  margin-top: 0.15rem;
+}
+
+.cv-upload__file {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  max-width: 100%;
+}
+
+.cv-upload__name {
+  font-weight: 600;
+  color: var(--text);
+  word-break: break-word;
+}
+
+.cv-upload__meta {
+  font-size: 0.82rem;
+  color: var(--text-faint);
+}
+
+.cv-upload__toolbar {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.cv-upload__hint {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.45;
+}
+
+.cv-upload__error {
+  margin: 0;
+  font-size: 0.82rem;
+  color: #fecaca;
+  line-height: 1.45;
 }
 
 .tone-field {
