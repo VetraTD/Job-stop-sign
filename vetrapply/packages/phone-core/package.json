@@ -1,0 +1,24 @@
+{
+  "name": "@vetrapply/phone-core",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./logger": "./src/lib/logger.js",
+    "./sentry": "./src/lib/sentry.js",
+    "./twiml": "./src/lib/twiml.js",
+    "./callState": "./src/lib/callState.js",
+    "./validate": "./src/lib/validate.js",
+    "./deepgram": "./src/services/deepgram.js",
+    "./googleTts": "./src/services/googleTts.js",
+    "./twilioNumbers": "./src/services/twilioNumbers.js"
+  },
+  "dependencies": {
+    "@deepgram/sdk": "^5.0.0",
+    "@google-cloud/text-to-speech": "^6.4.0",
+    "@sentry/node": "^9.0.0",
+    "twilio": "^5.0.0"
+  }
+}
