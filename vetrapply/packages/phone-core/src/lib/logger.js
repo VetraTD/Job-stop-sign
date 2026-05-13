@@ -13,7 +13,7 @@ export function createRequestId() {
 // Leveled logger with per-call debug support
 // ---------------------------------------------------------------------------
 
-const LEVELS = { DEBUG: 0, INFO: 1, ERROR: 2 };
+const LEVELS = { DEBUG: 0, INFO: 1, WARN: 2, ERROR: 3 };
 const configuredLevel =
   LEVELS[(process.env.LOG_LEVEL || "INFO").toUpperCase()] ?? LEVELS.INFO;
 const debugCallIds = new Set(
@@ -91,6 +91,7 @@ function emit(level, event, fields = {}) {
 export const log = {
   debug: (event, fields) => emit("DEBUG", event, fields),
   info: (event, fields) => emit("INFO", event, fields),
+  warn: (event, fields) => emit("WARN", event, fields),
   error: (event, fields) => emit("ERROR", event, fields),
 };
 
