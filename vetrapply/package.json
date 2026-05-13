@@ -1,0 +1,25 @@
+{
+  "name": "vetrapply",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:api": "npm run dev -w apps/api",
+    "dev:phone": "npm run dev -w apps/phone",
+    "dev": "npm-run-all -p dev:api dev:phone",
+    "test": "npm run test --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "start:api": "npm run start -w apps/api",
+    "start:phone": "npm run start -w apps/phone"
+  },
+  "devDependencies": {
+    "npm-run-all": "^4.1.5"
+  }
+}

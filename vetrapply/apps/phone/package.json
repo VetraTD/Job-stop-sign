@@ -1,0 +1,24 @@
+{
+  "name": "@vetrapply/phone",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "src/server.js",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@vetrapply/phone-core": "*",
+    "dotenv": "^17.0.0",
+    "express": "^5.0.0"
+  },
+  "devDependencies": {
+    "vitest": "^2.0.0"
+  }
+}
