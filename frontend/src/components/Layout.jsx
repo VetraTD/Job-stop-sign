@@ -1,3 +1,5 @@
+import { WorkspaceSidebar } from './WorkspaceSidebar'
+
 export function Layout({ children, user, onNavigate, onLogout, active }) {
   const nav = [
     { id: 'dashboard', label: 'Dashboard' },
@@ -38,7 +40,10 @@ export function Layout({ children, user, onNavigate, onLogout, active }) {
           </button>
         </div>
       </header>
-      <main className="main-area">{children}</main>
+      <div className="shell-body">
+        <WorkspaceSidebar />
+        <main className="main-area">{children}</main>
+      </div>
     </div>
   )
 }

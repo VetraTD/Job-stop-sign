@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { useClockTick } from '../hooks/useClockTick'
 import {
   daysSince,
   getApplicationHealth,
@@ -81,22 +82,58 @@ function statusPillClass(status) {
   return `tracker-pill--status-${status}`
 }
 
+/** Local calendar YYYY-MM-DD for an ISO timestamp. */
+function localDateKey(iso) {
+  if (!iso) return null
+  const d = new Date(iso)
+  if (Number.isNaN(d.getTime())) return null
+  const y = d.getFullYear()
+  const m = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${y}-${m}-${day}`
+}
+
+function pad2(n) {
+  return String(n).padStart(2, '0')
+}
+
+function buildCalendarCells(year, monthIndex) {
+  const firstDow = new Date(year, monthIndex, 1).getDay()
+  const dim = new Date(year, monthIndex + 1, 0).getDate()
+  const cells = []
+  for (let i = 0; i < firstDow; i += 1) cells.push({ kind: 'pad', key: `p-${i}` })
+  for (let d = 1; d <= dim; d += 1) cells.push({ kind: 'day', d, key: `d-${d}` })
+  while (cells.length % 7 !== 0) {
+    cells.push({ kind: 'pad', key: `e-${cells.length}` })
+  }
+  return cells
+}
+
+const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+
+function startOfMonthFromDate(d) {
+  return new Date(d.getFullYear(), d.getMonth(), 1)
+}
+
 export function Tracker({ applications, onViewPack }) {
   const [view, setView] = useState('table')
+  const [calendarMonth, setCalendarMonth] = useState(() =>
+    startOfMonthFromDate(new Date()),
+  )
+  const dayTick = useClockTick(60_000)
 
   const normalized = useMemo(
     () => applications.map(normalizeTrackerApp),
     [applications],
   )
 
-  const withHealth = useMemo(
-    () =>
-      normalized.map((app) => ({
-        ...app,
-        health: getApplicationHealth(app),
-      })),
-    [normalized],
-  )
+  const withHealth = useMemo(() => {
+    void dayTick
+    return normalized.map((app) => ({
+      ...app,
+      health: getApplicationHealth(app),
+    }))
+  }, [normalized, dayTick])
 
   const sorted = useMemo(
     () =>
@@ -134,6 +171,50 @@ export function Tracker({ applications, onViewPack }) {
     label: STATUS_LABEL[status],
     items: withHealth.filter((a) => a.status === status),
   }))
+
+  const appsByLocalDate = useMemo(() => {
+    const map = new Map()
+    const add = (app, iso) => {
+      const k = localDateKey(iso)
+      if (!k) return
+      const arr = map.get(k) ?? []
+      if (!arr.some((x) => x.id === app.id)) arr.push(app)
+      map.set(k, arr)
+    }
+    for (const app of withHealth) {
+      add(app, app.applicationDate)
+      if (app.lastCommunicationDate) add(app, app.lastCommunicationDate)
+    }
+    return map
+  }, [withHealth])
+
+  const calYear = calendarMonth.getFullYear()
+  const calMonth = calendarMonth.getMonth()
+  const calendarCells = useMemo(
+    () => buildCalendarCells(calYear, calMonth),
+    [calYear, calMonth],
+  )
+  const calendarTitle = useMemo(
+    () =>
+      new Intl.DateTimeFormat(undefined, {
+        month: 'long',
+        year: 'numeric',
+      }).format(new Date(calYear, calMonth, 1)),
+    [calYear, calMonth],
+  )
+
+  const goCalendarMonth = (delta) => {
+    setCalendarMonth((d) => new Date(d.getFullYear(), d.getMonth() + delta, 1))
+  }
+
+  const today = new Date()
+  const isTodayInGrid = (day) =>
+    day === today.getDate() &&
+    calMonth === today.getMonth() &&
+    calYear === today.getFullYear()
+
+  const dayKey = (day) =>
+    `${calYear}-${pad2(calMonth + 1)}-${pad2(day)}`
 
   return (
     <div className="page tracker-page">
@@ -205,6 +286,15 @@ export function Tracker({ applications, onViewPack }) {
               onClick={() => setView('board')}
             >
               By stage
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={view === 'calendar'}
+              className={`tracker-db-tab${view === 'calendar' ? ' is-active' : ''}`}
+              onClick={() => setView('calendar')}
+            >
+              Calendar
             </button>
           </div>
         </div>
@@ -333,7 +423,7 @@ export function Tracker({ applications, onViewPack }) {
               </tbody>
             </table>
           </div>
-        ) : (
+        ) : view === 'board' ? (
           <div className="tracker-columns tracker-columns--notion">
             {grouped.map((col) => (
               <section key={col.status} className="tracker-column">
@@ -424,6 +514,89 @@ export function Tracker({ applications, onViewPack }) {
                 </ul>
               </section>
             ))}
+          </div>
+        ) : (
+          <div className="tracker-calendar" aria-label="Application calendar">
+            <div className="tracker-calendar-toolbar">
+              <div className="tracker-calendar-nav">
+                <button
+                  type="button"
+                  className="tracker-calendar-nav-btn"
+                  aria-label="Previous month"
+                  onClick={() => goCalendarMonth(-1)}
+                >
+                  ‹
+                </button>
+                <h3 className="tracker-calendar-title">{calendarTitle}</h3>
+                <button
+                  type="button"
+                  className="tracker-calendar-nav-btn"
+                  aria-label="Next month"
+                  onClick={() => goCalendarMonth(1)}
+                >
+                  ›
+                </button>
+              </div>
+              <button
+                type="button"
+                className="tracker-calendar-today-btn"
+                onClick={() => setCalendarMonth(startOfMonthFromDate(new Date()))}
+              >
+                Today
+              </button>
+            </div>
+            <p className="tracker-calendar-hint">
+              Applications appear on <strong>application date</strong> and{' '}
+              <strong>last contact</strong> (your local calendar). Click an
+              entry to open the pack.
+            </p>
+            <div className="tracker-calendar-weekdays" role="row">
+              {WEEKDAYS.map((w) => (
+                <div key={w} className="tracker-calendar-weekday" role="columnheader">
+                  {w}
+                </div>
+              ))}
+            </div>
+            <div className="tracker-calendar-grid" role="grid">
+              {calendarCells.map((cell) =>
+                cell.kind === 'pad' ? (
+                  <div
+                    key={cell.key}
+                    className="tracker-calendar-cell tracker-calendar-cell--pad"
+                    aria-hidden
+                  />
+                ) : (
+                  <div
+                    key={cell.key}
+                    className={`tracker-calendar-cell tracker-calendar-cell--day${isTodayInGrid(cell.d) ? ' is-today' : ''}`}
+                    role="gridcell"
+                    aria-label={`${calendarTitle} ${cell.d}`}
+                  >
+                    <span className="tracker-calendar-daynum">{cell.d}</span>
+                    <div className="tracker-calendar-events">
+                      {(appsByLocalDate.get(dayKey(cell.d)) ?? []).map(
+                        (app) => (
+                          <button
+                            key={app.id}
+                            type="button"
+                            className="tracker-calendar-event"
+                            onClick={() => onViewPack(app.id)}
+                            title={`${app.jobTitle} · ${app.company}`}
+                          >
+                            <span className="tracker-calendar-event-title">
+                              {app.jobTitle}
+                            </span>
+                            <span className="tracker-calendar-event-co">
+                              {app.company}
+                            </span>
+                          </button>
+                        ),
+                      )}
+                    </div>
+                  </div>
+                ),
+              )}
+            </div>
           </div>
         )}
       </section>

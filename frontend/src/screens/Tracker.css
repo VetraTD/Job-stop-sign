@@ -516,3 +516,210 @@
   opacity: 0.4;
   cursor: not-allowed;
 }
+
+/* — Calendar view — */
+.tracker-calendar {
+  padding: 0.65rem 0.75rem 0.85rem;
+  background: #101614;
+}
+
+.tracker-calendar-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.45rem;
+}
+
+.tracker-calendar-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.tracker-calendar-nav-btn {
+  width: 2rem;
+  height: 2rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.25);
+  color: #a7f3d0;
+  font-size: 1.15rem;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    background 0.12s,
+    color 0.12s;
+}
+
+.tracker-calendar-nav-btn:hover {
+  background: rgba(52, 211, 153, 0.12);
+  color: #ecfdf5;
+}
+
+.tracker-calendar-title {
+  margin: 0;
+  min-width: 10rem;
+  text-align: center;
+  font-size: 0.95rem;
+  font-weight: 650;
+  color: #ecfdf5;
+  letter-spacing: -0.02em;
+}
+
+.tracker-calendar-today-btn {
+  padding: 0.35rem 0.75rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  border-radius: 6px;
+  border: 1px solid rgba(59, 130, 246, 0.35);
+  background: rgba(59, 130, 246, 0.12);
+  color: #93c5fd;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+
+.tracker-calendar-today-btn:hover {
+  background: rgba(59, 130, 246, 0.2);
+}
+
+.tracker-calendar-hint {
+  margin: 0 0 0.65rem;
+  font-size: 0.72rem;
+  line-height: 1.45;
+  color: #6b8f7a;
+}
+
+.tracker-calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1px;
+  margin-bottom: 1px;
+}
+
+.tracker-calendar-weekday {
+  padding: 0.35rem 0.25rem;
+  text-align: center;
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #5a7a68;
+  background: #151c19;
+}
+
+.tracker-calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1px;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(0, 0, 0, 0.4);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.tracker-calendar-cell {
+  min-height: 5.5rem;
+  background: #141a18;
+}
+
+@media (min-width: 720px) {
+  .tracker-calendar-cell {
+    min-height: 6.25rem;
+  }
+}
+
+.tracker-calendar-cell--pad {
+  background: #0d1110;
+  pointer-events: none;
+}
+
+.tracker-calendar-cell--day {
+  padding: 0.28rem 0.3rem 0.35rem;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.25rem;
+  overflow: hidden;
+}
+
+.tracker-calendar-cell--day.is-today {
+  box-shadow: inset 0 0 0 2px rgba(248, 113, 113, 0.55);
+  background: linear-gradient(180deg, #1a1816 0%, #141a18 100%);
+}
+
+.tracker-calendar-cell--day.is-today .tracker-calendar-daynum {
+  background: rgba(248, 113, 113, 0.9);
+  color: #fff;
+  border-radius: 999px;
+  width: 1.55rem;
+  height: 1.55rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.72rem;
+}
+
+.tracker-calendar-daynum {
+  align-self: flex-end;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #94a3b8;
+  line-height: 1;
+}
+
+.tracker-calendar-events {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-height: 0;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.tracker-calendar-event {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.06rem;
+  width: 100%;
+  margin: 0;
+  padding: 0.22rem 0.28rem;
+  border: none;
+  border-radius: 5px;
+  background: rgba(52, 211, 153, 0.08);
+  border: 1px solid rgba(52, 211, 153, 0.15);
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.12s;
+}
+
+.tracker-calendar-event:hover {
+  background: rgba(52, 211, 153, 0.15);
+}
+
+.tracker-calendar-event-title {
+  font-size: 0.65rem;
+  font-weight: 650;
+  color: #e2e8f0;
+  line-height: 1.25;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.tracker-calendar-event-co {
+  font-size: 0.58rem;
+  color: #64748b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}

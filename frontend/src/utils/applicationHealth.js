@@ -1,9 +1,18 @@
-/** Days from `iso` date string to now (floor). */
+/** Whole local calendar days from `iso` (date of that instant) to today. */
 export function daysSince(iso) {
   if (!iso) return 0
   const t = new Date(iso).getTime()
   if (Number.isNaN(t)) return 0
-  return Math.floor((Date.now() - t) / 86400000)
+  const start = new Date(t)
+  const now = new Date()
+  const startUtc = Date.UTC(
+    start.getFullYear(),
+    start.getMonth(),
+    start.getDate(),
+  )
+  const nowUtc = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate())
+  const diff = Math.floor((nowUtc - startUtc) / 86400000)
+  return Math.max(0, diff)
 }
 
 /** Latest activity timestamp from updates and communications. */
