@@ -1,12 +1,33 @@
 import { useState } from 'react'
+import { isSupabaseConfigured, supabase } from '../lib/supabaseClient'
+import { ensureProfileRow } from '../lib/profiles'
 
-export function AuthLogin({ onBack, onSuccess }) {
+export function AuthLogin({ onBack }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault()
-    onSuccess({ email: email.trim() || 'you@example.com' })
+    setError('')
+    if (!isSupabaseConfigured) {
+      setError('Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to your .env file.')
+      return
+    }
+    setLoading(true)
+    const { data, error: err } = await supabase.auth.signInWithPassword({
+      email: email.trim(),
+      password,
+    })
+    setLoading(false)
+    if (err) {
+      setError(err.message)
+      return
+    }
+    if (data.user) {
+      await ensureProfileRow(data.user.id)
+    }
   }
 
   return (
@@ -17,9 +38,20 @@ export function AuthLogin({ onBack, onSuccess }) {
       <div className="auth-card">
         <h1 className="page-title">Log in</h1>
         <p className="page-subtitle">
-          Frontend-only demo — use any email and password.
+          Sign in with your Supabase account. Session is stored in the browser.
         </p>
+        {!isSupabaseConfigured ? (
+          <p className="profile-banner profile-banner--error">
+            Supabase env vars are missing. Copy{' '}
+            <code className="profile-code">.env.example</code> to{' '}
+            <code className="profile-code">.env</code> and add your project URL
+            and anon key.
+          </p>
+        ) : null}
         <form className="form" onSubmit={handleSubmit}>
+          {error ? (
+            <p className="profile-banner profile-banner--error">{error}</p>
+          ) : null}
           <label className="field">
             <span className="field-label">Email</span>
             <input
@@ -29,6 +61,7 @@ export function AuthLogin({ onBack, onSuccess }) {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@company.com"
+              required
             />
           </label>
           <label className="field">
@@ -40,10 +73,15 @@ export function AuthLogin({ onBack, onSuccess }) {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
+              required
             />
           </label>
-          <button type="submit" className="btn btn-primary btn-block">
-            Log in
+          <button
+            type="submit"
+            className="btn btn-primary btn-block"
+            disabled={loading || !isSupabaseConfigured}
+          >
+            {loading ? 'Signing in…' : 'Log in'}
           </button>
         </form>
       </div>

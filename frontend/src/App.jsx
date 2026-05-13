@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Layout } from './components/Layout'
 import { Landing } from './screens/Landing'
 import { AuthLogin } from './screens/AuthLogin'
@@ -8,7 +8,10 @@ import { NewApplication } from './screens/NewApplication'
 import { ApplicationDetail } from './screens/ApplicationDetail'
 import { Tracker } from './screens/Tracker'
 import { Hotline } from './screens/Hotline'
+import { Profile } from './screens/Profile'
 import { createId, generateMockPack } from './utils/mockPack'
+import { supabase } from './lib/supabaseClient'
+import { ensureProfileRow, fetchProfile } from './lib/profiles'
 import './App.css'
 
 const DAY_MS = 86400000
@@ -143,10 +146,13 @@ function buildSeedApplications() {
 }
 
 export default function App() {
+  const [authReady, setAuthReady] = useState(false)
   const [user, setUser] = useState(null)
+  const [profile, setProfile] = useState(null)
   const [screen, setScreen] = useState('landing')
   const [applications, setApplications] = useState([])
   const [selectedId, setSelectedId] = useState(null)
+  const demoSeededRef = useRef(false)
 
   const isAuthenticated = Boolean(user)
 
@@ -155,16 +161,88 @@ export default function App() {
     [applications, selectedId],
   )
 
-  const login = useCallback((u) => {
-    setUser(u)
+  const seedDemoApplicationsOnce = useCallback(() => {
+    if (demoSeededRef.current) return
+    demoSeededRef.current = true
     setApplications(buildSeedApplications())
-    setScreen('dashboard')
   }, [])
 
-  const logout = useCallback(() => {
+  const refreshProfile = useCallback(async (userId) => {
+    const { profile: row, error } = await fetchProfile(userId)
+    if (error) {
+      console.error('[profiles]', error.message)
+      setProfile(null)
+      return
+    }
+    if (!row) {
+      const { profile: created, error: insertErr } =
+        await ensureProfileRow(userId)
+      if (insertErr) {
+        console.error('[profiles]', insertErr.message)
+        setProfile(null)
+        return
+      }
+      setProfile(created)
+      return
+    }
+    setProfile(row)
+  }, [])
+
+  useEffect(() => {
+    let cancelled = false
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (cancelled) return
+      if (session?.user) {
+        setUser({
+          id: session.user.id,
+          email: session.user.email ?? '',
+        })
+        setScreen('dashboard')
+        seedDemoApplicationsOnce()
+        refreshProfile(session.user.id)
+      }
+      setAuthReady(true)
+    })
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session?.user) {
+        setUser({
+          id: session.user.id,
+          email: session.user.email ?? '',
+        })
+        refreshProfile(session.user.id)
+        if (event === 'SIGNED_IN') {
+          setScreen('dashboard')
+          seedDemoApplicationsOnce()
+        }
+      } else {
+        setUser(null)
+        setProfile(null)
+        setApplications([])
+        setSelectedId(null)
+        demoSeededRef.current = false
+        if (event === 'SIGNED_OUT') {
+          setScreen('landing')
+        }
+      }
+    })
+
+    return () => {
+      cancelled = true
+      subscription.unsubscribe()
+    }
+  }, [refreshProfile, seedDemoApplicationsOnce])
+
+  const logout = useCallback(async () => {
+    await supabase.auth.signOut()
     setUser(null)
+    setProfile(null)
     setApplications([])
     setSelectedId(null)
+    demoSeededRef.current = false
     setScreen('landing')
   }, [])
 
@@ -216,20 +294,22 @@ export default function App() {
   const layoutActive =
     screen === 'applicationDetail' ? 'dashboard' : screen
 
+  if (!authReady) {
+    return (
+      <div className="shell auth-boot">
+        <main className="main-area auth-boot-inner">Loading…</main>
+      </div>
+    )
+  }
+
   if (!isAuthenticated) {
     if (screen === 'login') {
-      return (
-        <AuthLogin
-          onBack={() => go('landing')}
-          onSuccess={login}
-        />
-      )
+      return <AuthLogin onBack={() => go('landing')} />
     }
     if (screen === 'signup') {
       return (
         <AuthSignup
           onBack={() => go('landing')}
-          onSuccess={login}
           onLogin={() => go('login')}
         />
       )
@@ -279,6 +359,12 @@ export default function App() {
       />
     ),
     hotline: <Hotline />,
+    profile: (
+      <Profile
+        user={user}
+        onSaved={(next) => setProfile(next)}
+      />
+    ),
   }
 
   const inner = authenticatedScreens[screen] ?? authenticatedScreens.dashboard
@@ -286,6 +372,7 @@ export default function App() {
   return (
     <Layout
       user={user}
+      profile={profile}
       active={layoutActive}
       onNavigate={(id) => {
         setSelectedId(null)

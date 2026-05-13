@@ -28,26 +28,23 @@
   align-items: center;
 }
 
-/* ——— Skyline (custom scene, not a stock card) ——— */
+/* ——— Skyline — meet (never crops); extra viewBox headroom for roofs ——— */
 .landing-skyline {
-  margin: 0 -1rem 0;
-  padding: 0;
-  border-radius: 10px;
+  margin: 0;
+  padding: 10px 0 0;
+  border-radius: 14px;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   background: #0b1222;
-}
-
-@media (min-width: 640px) {
-  .landing-skyline {
-    margin: 0;
-  }
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset;
 }
 
 .landing-skyline-svg {
   display: block;
   width: 100%;
-  height: clamp(72px, 14vw, 100px);
+  /* Taller strip so the city + sky read clearly; meet keeps full artwork visible */
+  height: clamp(160px, 28vw, 260px);
+  max-height: min(38vh, 280px);
   vertical-align: bottom;
 }
 

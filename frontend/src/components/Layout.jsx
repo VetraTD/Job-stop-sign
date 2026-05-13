@@ -1,12 +1,16 @@
 import { WorkspaceSidebar } from './WorkspaceSidebar'
 
-export function Layout({ children, user, onNavigate, onLogout, active }) {
+export function Layout({ children, user, profile, onNavigate, onLogout, active }) {
   const nav = [
     { id: 'dashboard', label: 'Dashboard' },
     { id: 'newApplication', label: 'New application' },
     { id: 'tracker', label: 'Tracker' },
     { id: 'hotline', label: 'AI Career Coach' },
+    { id: 'profile', label: 'Profile' },
   ]
+
+  const userLine =
+    profile?.display_name?.trim() || user?.email || 'Account'
 
   return (
     <div className="shell">
@@ -32,8 +36,8 @@ export function Layout({ children, user, onNavigate, onLogout, active }) {
           ))}
         </nav>
         <div className="topbar-user">
-          <span className="user-email" title={user?.email}>
-            {user?.email}
+          <span className="user-email" title={user?.email ?? ''}>
+            {userLine}
           </span>
           <button type="button" className="btn btn-ghost" onClick={onLogout}>
             Log out

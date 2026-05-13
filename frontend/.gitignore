@@ -12,6 +12,11 @@ dist
 dist-ssr
 *.local
 
+# Environment (Supabase URL/anon key, etc.) — Vite loads .env, .env.local, .env.[mode]
+.env
+.env.*
+!.env.example
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

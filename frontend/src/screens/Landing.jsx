@@ -5,10 +5,10 @@ function LandingSkyline() {
     <div className="landing-skyline" aria-hidden>
       <svg
         className="landing-skyline-svg"
-        viewBox="0 0 560 108"
-        preserveAspectRatio="xMidYMax slice"
+        viewBox="0 -20 560 128"
+        preserveAspectRatio="xMidYMax meet"
       >
-        <rect width="560" height="108" fill="#0f172a" />
+        <rect x="0" y="-20" width="560" height="128" fill="#0f172a" />
 
         {/* City silhouette */}
         <g className="landing-city" opacity="0.5">

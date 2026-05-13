@@ -5,6 +5,25 @@
   flex-direction: column;
 }
 
+.auth-boot {
+  align-items: center;
+  justify-content: center;
+}
+
+.auth-boot-inner {
+  padding: 3rem 1.25rem;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+.auth-boot .main-area {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .shell-body {
   flex: 1;
   display: flex;
@@ -315,6 +334,43 @@
   .form-grid {
     grid-template-columns: 1fr;
   }
+}
+
+.field-span {
+  grid-column: 1 / -1;
+}
+
+.profile-banner {
+  margin: 0;
+  padding: 0.65rem 0.85rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.88rem;
+}
+
+.profile-banner--error {
+  background: rgba(248, 113, 113, 0.12);
+  border: 1px solid rgba(248, 113, 113, 0.28);
+  color: #fecaca;
+}
+
+.profile-banner--ok {
+  background: rgba(74, 222, 128, 0.1);
+  border: 1px solid rgba(74, 222, 128, 0.25);
+  color: #bbf7d0;
+}
+
+.profile-actions {
+  margin-top: 0.35rem;
+}
+
+.profile-code {
+  font-size: 0.88em;
+  color: var(--accent-bright);
+}
+
+.profile-email {
+  font-weight: 600;
+  color: var(--text-muted);
 }
 
 .field {
