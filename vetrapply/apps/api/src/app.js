@@ -14,6 +14,7 @@ import { cvRouter } from "./routes/cv.js";
 import { jobsRouter } from "./routes/jobs.js";
 import { packsRouter } from "./routes/packs.js";
 import { applicationsRouter } from "./routes/applications.js";
+import { hotlineRouter } from "./routes/hotline.js";
 
 export const app = express();
 
@@ -40,6 +41,7 @@ app.use("/cv", cvRouter);
 app.use("/jobs", jobsRouter);
 app.use("/packs", packsRouter);
 app.use("/applications", applicationsRouter);
+app.use("/hotline", hotlineRouter);
 
 app.use(notFound);
 app.use(errorHandler);

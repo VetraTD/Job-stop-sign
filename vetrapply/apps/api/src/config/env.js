@@ -23,6 +23,8 @@ const Schema = z.object({
   RATE_LIMIT_PACKS_PER_HOUR: z.coerce.number().int().positive().default(20),
 
   RUN_LLM_TESTS: z.coerce.number().int().min(0).max(1).default(0),
+
+  HOTLINE_DIAL_NUMBER: z.string().optional().default(""),
 });
 
 const parsed = Schema.safeParse(process.env);
